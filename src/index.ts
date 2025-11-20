@@ -118,12 +118,25 @@ app.get("/api/games", async (req, res) => {
 });
 
 app.get("/api/scores", async (req, res) => {
+  const gameid = req.query.gameid as string;
+  if (!gameid) {
+    return res
+      .status(400)
+      .json({ error: "gameid query parameter is required" });
+  }
+
+  const hasGame = (await prisma.game.count({ where: { id: gameid } })) > 0;
+  if (!hasGame) {
+    return res.status(404).json({ error: "Game not found" });
+  }
+
   const page = parseInt(req.query.page as string) || 1;
   const limit = 50;
   const skip = (page - 1) * limit;
 
   const [scores, totalCount] = await Promise.all([
     prisma.score.findMany({
+      where: { gameId: gameid },
       skip,
       take: limit,
       orderBy: { createdAt: "desc" },
@@ -131,7 +144,7 @@ app.get("/api/scores", async (req, res) => {
         game: true,
       },
     }),
-    prisma.score.count(),
+    prisma.score.count({ where: { gameId: gameid } }),
   ]);
 
   res.json({

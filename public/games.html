@@ -14,7 +14,7 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: white;
         min-height: 100vh;
         padding: 20px;
       }
@@ -25,30 +25,12 @@
       }
 
       h1 {
-        color: white;
+        color: black;
         text-align: center;
         margin-bottom: 30px;
-        font-size: 2.5rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .nav {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .nav a {
-        color: white;
-        text-decoration: none;
-        padding: 10px 20px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 5px;
-        margin: 0 10px;
-        transition: background 0.3s;
-      }
-
-      .nav a:hover {
-        background: rgba(255, 255, 255, 0.3);
+        font-size: 2rem;
+        border-bottom: 2px solid black;
+        padding-bottom: 10px;
       }
 
       .games-grid {
@@ -60,21 +42,20 @@
 
       .game-card {
         background: white;
-        border-radius: 10px;
+        border: 2px solid black;
         padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        transition: background 0.2s;
       }
 
       .game-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background: #f0f0f0;
       }
 
       .game-name {
         font-size: 1.5rem;
         font-weight: bold;
-        color: #667eea;
+        color: black;
         margin-bottom: 10px;
       }
 
@@ -85,23 +66,22 @@
 
       .loading {
         text-align: center;
-        color: white;
+        color: black;
         font-size: 1.2rem;
         padding: 50px;
       }
 
       .error {
-        background: #ff6b6b;
+        background: black;
         color: white;
         padding: 20px;
-        border-radius: 10px;
         text-align: center;
         margin: 20px 0;
       }
 
       .empty {
         text-align: center;
-        color: white;
+        color: black;
         font-size: 1.2rem;
         padding: 50px;
       }
@@ -109,12 +89,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>🎮 Games</h1>
-
-      <div class="nav">
-        <a href="/games.html">Games</a>
-        <a href="/records.html">Records</a>
-      </div>
+      <h1>Games</h1>
 
       <div id="content">
         <div class="loading">Loading games...</div>
@@ -147,11 +122,16 @@
             card.innerHTML = `
                         <div class="game-name">${escapeHtml(game.id)}</div>
                         <div class="game-stats">
-                            📊 ${game._count.scores} score${
+                            ${game._count.scores} score${
               game._count.scores !== 1 ? "s" : ""
             }
                         </div>
                     `;
+            card.onclick = () => {
+              window.location.href = `/records.html?gameid=${encodeURIComponent(
+                game.id
+              )}`;
+            };
             gamesGrid.appendChild(card);
           });
 
@@ -170,7 +150,6 @@
         return div.innerHTML;
       }
 
-      // Load games when page loads
       loadGames();
     </script>
   </body>
