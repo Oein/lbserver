@@ -5,13 +5,15 @@
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/express": "^5.0.5"
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "prisma": "^7.0.0"
