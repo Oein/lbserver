@@ -12,7 +12,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use("/", express.static(path.join(__dirname, "..", "public")));
+app.use("/", express.static("public"));
 
 app.get("/lb", async (req, res) => {
   const gameid = req.query.gameid as string;
@@ -142,7 +142,7 @@ app.get("/api/scores", async (req, res) => {
       where: { gameId: gameid },
       skip,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy: { value: "desc" },
       include: {
         game: true,
       },
