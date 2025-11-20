@@ -4,6 +4,10 @@ import { prisma } from "./lib/prisma.js";
 const app = express();
 
 app.use(express.json());
+app.all("/*", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 
 app.get("/lb", async (req, res) => {
   const gameid = req.query.gameid as string;
