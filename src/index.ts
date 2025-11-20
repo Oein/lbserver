@@ -48,7 +48,7 @@ app.post("/score", async (req, res) => {
 
 app.post("/game", async (req, res) => {
   const { name } = req.body;
-  if (req.headers["authorization"] !== `Bearer ${process.env.ADMIN_TOKEN}`) {
+  if (req.headers["authorization"] !== process.env.ADMIN_TOKEN) {
     return res.status(403).json({ error: "Forbidden" });
   }
   if (!name) {
