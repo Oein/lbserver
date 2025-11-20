@@ -29,6 +29,11 @@ app.get("/lb", async (req, res) => {
     where: { gameId: gameid },
     orderBy: { value: "desc" },
     take: 10,
+    select: {
+      player: true,
+      value: true,
+      additionalInfo: true,
+    },
   });
   res.json(leaderboard);
 });
@@ -53,6 +58,38 @@ app.post("/score", async (req, res) => {
     },
   });
   res.status(201).json(score);
+});
+
+app.post("/scores", async (req, res) => {
+  const { gameid, scores } = req.body;
+  if (!gameid || !Array.isArray(scores)) {
+    return res
+      .status(400)
+      .json({ error: "gameid and scores array are required" });
+  }
+  const hasGame = (await prisma.game.count({ where: { id: gameid } })) > 0;
+  if (!hasGame) {
+    return res.status(404).json({ error: "Game not found" });
+  }
+  const createdScores = [];
+  for (const scoreData of scores) {
+    const { player, value, addi } = scoreData;
+    if (!player || value === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Each score must have player and value" });
+    }
+    const score = await prisma.score.create({
+      data: {
+        gameId: gameid,
+        player,
+        value,
+        additionalInfo: addi || null,
+      },
+    });
+    createdScores.push(score);
+  }
+  res.status(201).json(createdScores);
 });
 
 app.post("/game", async (req, res) => {
