@@ -46,6 +46,19 @@ app.post("/score", async (req, res) => {
   res.status(201).json(score);
 });
 
+app.post("/game", async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: "name is required" });
+  }
+  const game = await prisma.game.create({
+    data: {
+      id: name,
+    },
+  });
+  res.status(201).json(game);
+});
+
 const PORT = process.env.PORT || 16974;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
