@@ -105,6 +105,48 @@ app.post("/game", async (req, res) => {
   res.status(201).json(game);
 });
 
+app.get("/api/games", async (req, res) => {
+  const games = await prisma.game.findMany({
+    select: {
+      id: true,
+      _count: {
+        select: { scores: true },
+      },
+    },
+  });
+  res.json(games);
+});
+
+app.get("/api/scores", async (req, res) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = 50;
+  const skip = (page - 1) * limit;
+
+  const [scores, totalCount] = await Promise.all([
+    prisma.score.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        game: true,
+      },
+    }),
+    prisma.score.count(),
+  ]);
+
+  res.json({
+    scores,
+    page,
+    limit,
+    totalCount,
+    totalPages: Math.ceil(totalCount / limit),
+  });
+});
+
+import path from "path";
+
+app.use(express.static(path.join(__dirname, "..", "public")));
+
 const PORT = process.env.PORT || 16974;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
