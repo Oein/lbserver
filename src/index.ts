@@ -4,7 +4,7 @@ import { prisma } from "./lib/prisma.js";
 const app = express();
 
 app.use(express.json());
-app.all("/*", function (req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
