@@ -1,5 +1,6 @@
 import express from "express";
 import { prisma } from "./lib/prisma.js";
+import path from "path";
 
 const app = express();
 
@@ -10,6 +11,8 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
+
+app.use("/", express.static(path.join(__dirname, "..", "public")));
 
 app.get("/lb", async (req, res) => {
   const gameid = req.query.gameid as string;
@@ -155,10 +158,6 @@ app.get("/api/scores", async (req, res) => {
     totalPages: Math.ceil(totalCount / limit),
   });
 });
-
-import path from "path";
-
-app.use(express.static(path.join(__dirname, "..", "public")));
 
 const PORT = process.env.PORT || 16974;
 app.listen(PORT, () => {
