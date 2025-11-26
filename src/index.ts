@@ -1,6 +1,5 @@
 import express from "express";
 import { prisma } from "./lib/prisma.js";
-import path from "path";
 
 const app = express();
 
@@ -44,6 +43,14 @@ app.post("/score", async (req, res) => {
     return res
       .status(400)
       .json({ error: "gameid, player, and value are required" });
+  }
+  if (value <= 0) {
+    return res.status(201).json({
+      gameId: "notsaved",
+      player: "notsaved",
+      value: 0,
+      additionalInfo: "Score not saved because value is non-positive",
+    });
   }
   const hasGame = (await prisma.game.count({ where: { id: gameid } })) > 0;
   if (!hasGame) {
@@ -163,3 +170,18 @@ const PORT = process.env.PORT || 16974;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+prisma.score
+  .deleteMany({
+    where: {
+      value: {
+        lte: 0,
+      },
+    },
+  })
+  .then((result) => {
+    console.log(`Deleted ${result.count} scores with non-positive values.`);
+  })
+  .catch((error) => {
+    console.error("Error deleting non-positive scores:", error);
+  });
